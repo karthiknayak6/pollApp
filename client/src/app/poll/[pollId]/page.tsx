@@ -1,9 +1,9 @@
+"use client";
 import Layout from "@/components/Layout";
 import SingleOptionDetailsView from "@/components/SingleOptionDetailsView";
-import SinglePoll from "@/components/SinglePoll";
 import React from "react";
 
-export default function PollDetails() {
+export default function PollDetails({ params }: any) {
   return (
     <Layout>
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -19,6 +19,7 @@ export default function PollDetails() {
           <SingleOptionDetailsView />
           <SingleOptionDetailsView />
           <SingleOptionDetailsView />
+          <p>POLLID:{params.pollId}</p>
         </div>
       </div>
     </Layout>

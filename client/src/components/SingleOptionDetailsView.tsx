@@ -4,7 +4,7 @@ import ProgressBar from "./ProgressBar";
 export default function SingleOptionDetailsView() {
   return (
     <div className="px-12 pb-9 pt-1">
-      <p className="ml-3 mb-1 text-md">Coffee</p>
+      <p className="ml-3 mb-1 sm:text-md text-sm">Coffee</p>
       <div className="flex">
         <ProgressBar />
 

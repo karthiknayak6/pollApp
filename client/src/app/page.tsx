@@ -6,7 +6,7 @@ import React from "react";
 export default function Home() {
   return (
     <Layout>
-      <div className="mt-8 container px-16 ">
+      <div className="mt-8 container px-16 mx-auto ">
         <div className="text-4xl  font-semibold text-gray-700">
           Welcome, Karthik!
         </div>
