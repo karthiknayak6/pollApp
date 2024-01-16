@@ -10,8 +10,14 @@ export const doc = (req: Request, res: Response) => {
   res.send("Check console");
 };
 const maxAge = 3 * 24 * 60 * 60;
+
 const createToken = (id: Types.ObjectId) => {
-  return jwt.sign({ id }, "secret", { expiresIn: maxAge });
+  const secret = process.env.JWT_SECRET;
+  if (secret) {
+    return jwt.sign({ id }, secret, { expiresIn: maxAge });
+  } else {
+    console.log("secret is not provided from env");
+  }
 };
 
 export const register = async (req: Request, res: Response) => {

@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from "express";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import { ExpressError } from "../utils/ExpressError";
+import { IGetUserAuthInfoRequest } from "../utils/ExpressTypes";
+
 export const checkUser = (req: Request, res: Response, next: NextFunction) => {
   console.log("user checked!!");
   next();
@@ -11,9 +13,16 @@ export const requireAuth = (
   res: Response,
   next: NextFunction
 ) => {
+  const secret = process.env.JWT_SECRET;
+  console.log("SECRET: ", secret);
   const token = req.cookies.jwt;
   try {
-    const decodedToken = jwt.verify(token, "secret");
+    if (secret) {
+      const decodedToken = jwt.verify(token, secret);
+      req.user = decodedToken;
+    } else {
+      console.log("secret is not provided from env!");
+    }
     next();
   } catch (err) {
     if (err instanceof Error) throw new ExpressError(err.message, 400);

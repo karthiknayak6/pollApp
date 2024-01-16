@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import { authRoutes } from "./routes/authRoutes";
+import { pollRoutes } from "./routes/pollRoutes";
 
 const app = express();
 dotenv.config();
@@ -27,7 +28,7 @@ const connectDB = async () => {
 };
 
 connectDB();
-
+app.use("/", pollRoutes);
 app.use("/", authRoutes);
 
 app.listen(port, () => {
