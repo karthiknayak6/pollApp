@@ -14,8 +14,8 @@ export const requireAuth = (
   next: NextFunction
 ) => {
   const secret = process.env.JWT_SECRET;
-  console.log("SECRET: ", secret);
   const token = req.cookies.jwt;
+  console.log("TOKEENNNNNNN: ", token);
   try {
     if (secret) {
       const decodedToken = jwt.verify(token, secret);

@@ -1,14 +1,17 @@
 import { Types, Document, Model } from "mongoose";
 
 export interface IOption {
+  _id: string;
   option_name: string;
   votes: number;
+  OptionVoters: [Types.ObjectId];
 }
 export interface IPoll {
   author: Types.ObjectId;
   total_votes: number;
   title: string;
   options: [IOption];
+  voters: [Types.ObjectId];
   created_at: Date;
 }
 export interface IUser extends Document {

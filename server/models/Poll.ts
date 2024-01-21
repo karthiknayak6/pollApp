@@ -9,6 +9,12 @@ const optionSchema = new Schema<IOption>({
     type: Number,
     default: 0,
   },
+  OptionVoters: [
+    {
+      type: Types.ObjectId,
+      ref: "User",
+    },
+  ],
 });
 
 const pollSchema = new Schema<IPoll>({
@@ -26,6 +32,12 @@ const pollSchema = new Schema<IPoll>({
     maxLength: [50, "Title Exceeded maximum length limit! "],
   },
   options: [optionSchema],
+  voters: [
+    {
+      type: Types.ObjectId,
+      ref: "User",
+    },
+  ],
   created_at: {
     type: Date,
     default: Date.now(),
