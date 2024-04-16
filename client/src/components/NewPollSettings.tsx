@@ -5,6 +5,8 @@ export default function NewPollSettings() {
     <div className="my-4">
       <p className="mb-1">Settings: </p>
       <input
+        checked
+        disabled
         type="checkbox"
         id="anonymous"
         className="mr-2 cursor-pointer ml-4"

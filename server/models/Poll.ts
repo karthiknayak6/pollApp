@@ -1,19 +1,7 @@
 import mongoose, { Types, mongo } from "mongoose";
+import { IOption, IPoll } from "../utils/mongooseTypes";
 
 const { Schema } = mongoose;
-
-interface IOption {
-  option_name: string;
-  votes: number;
-}
-
-interface IPoll {
-  author: Types.ObjectId;
-  total_votes: number;
-  title: string;
-  options: [IOption];
-  created_at: Date;
-}
 
 const optionSchema = new Schema<IOption>({
   option_name: String,
@@ -21,6 +9,12 @@ const optionSchema = new Schema<IOption>({
     type: Number,
     default: 0,
   },
+  OptionVoters: [
+    {
+      type: Types.ObjectId,
+      ref: "User",
+    },
+  ],
 });
 
 const pollSchema = new Schema<IPoll>({
@@ -38,6 +32,12 @@ const pollSchema = new Schema<IPoll>({
     maxLength: [50, "Title Exceeded maximum length limit! "],
   },
   options: [optionSchema],
+  voters: [
+    {
+      type: Types.ObjectId,
+      ref: "User",
+    },
+  ],
   created_at: {
     type: Date,
     default: Date.now(),

@@ -1,9 +1,11 @@
+// NewOption.tsx
+
 import React, { useState } from "react";
 
 type NewOptionProps = {
-  option: string;
-  options: string[];
-  setOptions: React.Dispatch<React.SetStateAction<string[]>>;
+  option: { option_name: string };
+  options: { option_name: string }[];
+  setOptions: React.Dispatch<React.SetStateAction<{ option_name: string }[]>>;
 };
 
 const NewOption: React.FC<NewOptionProps> = ({
@@ -11,16 +13,16 @@ const NewOption: React.FC<NewOptionProps> = ({
   options,
   setOptions,
 }) => {
-  const [value, setValue] = useState(option);
+  // Initialize the value with the option_name or an empty string
+  const [value, setValue] = useState(option.option_name || "");
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const updatedOptions = [...options];
     const index = options.indexOf(option);
-    updatedOptions[index] = e.target.value;
+    updatedOptions[index] = { option_name: e.target.value };
 
     setValue(e.target.value);
     setOptions(updatedOptions);
-    console.log(options);
   };
 
   const handleRemoveOption: React.MouseEventHandler<HTMLButtonElement> = (

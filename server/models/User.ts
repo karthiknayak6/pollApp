@@ -1,21 +1,9 @@
 import mongoose, { Types, Document, Model } from "mongoose";
 import isEmail from "validator/lib/isEmail";
 import bcrypt from "bcrypt";
+import { IUser, IUserModel } from "../utils/mongooseTypes";
 
 const { Schema } = mongoose;
-
-interface IUser extends Document {
-  first_name: string;
-  last_name: string;
-  email: string;
-  username: string;
-  password: string;
-  polls: [Types.ObjectId];
-}
-
-interface IUserModel extends Model<IUser> {
-  login(username: string, password: string): Promise<IUser>;
-}
 
 const userSchema = new Schema<IUser>({
   first_name: {
@@ -67,7 +55,7 @@ userSchema.statics.login = async function (username: string, password: string) {
     }
     throw Error("Incorrect password");
   }
-  throw Error("Incorrect email");
+  throw Error("Incorrect username");
 };
 
 export const User = mongoose.model<IUser, IUserModel>("User", userSchema);

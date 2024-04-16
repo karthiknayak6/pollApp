@@ -1,17 +1,46 @@
+// NewPoll.tsx
+
 "use client";
 import Layout from "@/components/Layout";
 import NewOption from "@/components/NewOption";
 import NewPollSettings from "@/components/NewPollSettings";
-import React, { useState } from "react";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
 export default function NewPoll() {
-  const [options, setOptions] = useState<string[]>(["", ""]);
+  const router = useRouter();
+  const [options, setOptions] = useState<{ option_name: string }[]>([
+    { option_name: "" },
+    { option_name: "" },
+  ]);
+  const [title, setTitle] = useState("");
   const handleNewOption = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.preventDefault();
-    setOptions([...options, ""]);
+    setOptions([...options, { option_name: "" }]);
   };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log(title, options);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/newPoll",
+        { title, options: options },
+        { withCredentials: true }
+      );
+
+      router.push("/");
+
+      const data = response.data;
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <Layout>
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -19,28 +48,29 @@ export default function NewPoll() {
           <div className=" text-center text-xl font-semibold text-gray-700">
             Create a new Poll
           </div>
-          <form>
+          <form onSubmit={handleSubmit}>
             <div className="flex flex-col">
               <label className="">Title:</label>
               <input
+                onChange={(e) => {
+                  setTitle(e.target.value);
+                }}
                 type="text"
                 className="mt-1 p-3 block w-full border rounded-md focus:outline-none focus:border-purple-700"
-                placeholder="Enter the title of you poll"
+                placeholder="Enter the title of your poll"
               />
             </div>
             <div className="my-4">
               <label>Options:</label>
               <div>
-                {options.map((option, index) => {
-                  return (
-                    <NewOption
-                      key={index}
-                      option={option}
-                      options={options}
-                      setOptions={setOptions}
-                    />
-                  );
-                })}
+                {options.map((option, index) => (
+                  <NewOption
+                    key={index}
+                    option={option}
+                    options={options}
+                    setOptions={setOptions}
+                  />
+                ))}
                 <button
                   type="submit"
                   onClick={handleNewOption}
