@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../hooks/useAuth";
 
 export default function Navbar() {
   const { user, dispatch } = useAuth()
