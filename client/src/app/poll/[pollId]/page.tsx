@@ -4,9 +4,29 @@ import axios, { isAxiosError } from "axios";
 import Layout from "@/components/Layout";
 import { IOption } from "@/components/YourPolls";
 import ProgressBar from "../../../components/ProgressBar";
+import io from "socket.io-client";
+import { Option, Poll } from "@/utils/types";
 
 export default function PollDetails({ params }: any) {
-  const [poll, setPoll] = useState<any>({ options: [] });
+  const [poll, setPoll] = useState<Poll>({
+    __v: 0,
+    _id: '',
+    author: {
+      _id: '',
+      email: '',
+      first_name: '',
+      last_name: '',
+      password: '',
+      username: '',
+      polls: [],
+    },
+    created_at: '',
+    options: [{_id: '', option_name: '', votes: 0 }],
+    title: '',
+    total_votes: 0,
+    voters: [],
+  });
+  
   const [isVoted, setIsVoted] = useState(false);
   const [alreadyVoted, setAlreadyVoted] = useState(false);
 
@@ -31,8 +51,16 @@ export default function PollDetails({ params }: any) {
   }, [params.pollId, isVoted]);
 
   useEffect(() => {
-    console.log(poll);
-  }, [poll]);
+    const socket = io("http://localhost:8080");
+
+    socket.on("updatePoll", (updatedPoll: any) => { 
+      setPoll(updatedPoll);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   const handleVote = async (option_id: string, poll_id: string) => {
     const response = await axios.get(
@@ -51,6 +79,8 @@ export default function PollDetails({ params }: any) {
     }
   };
 
+  console.log("Poll autherrrr:",poll.author);
+
   return (
     <Layout>
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -63,7 +93,7 @@ export default function PollDetails({ params }: any) {
             {poll?.title}
           </div>
           <div>
-            {poll?.options.map((option: IOption, index: number) => {
+            {poll?.options.map((option: Option, index: number) => {
               return (
                 <div key={index} className="">
                   <div className="my-3 ml-3">{option.option_name} </div>

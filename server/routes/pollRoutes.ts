@@ -1,4 +1,5 @@
-import { Router } from "express";
+import { Request, Response, NextFunction, Router } from "express";
+import { Server } from "socket.io";
 import { requireAuth } from "../middlewares/authMiddleware";
 import {
   createNewPoll,
@@ -7,9 +8,13 @@ import {
   issueVote,
 } from "../controllers/pollController";
 
-export const pollRoutes = Router();
+export const pollRoutes = (io: Server) => {
+  const router = Router();
 
-pollRoutes.post("/newPoll", requireAuth, createNewPoll);
-pollRoutes.get("/poll/:pollId", requireAuth, fetchPoll);
-pollRoutes.get("/polls", requireAuth, fetchAllPolls);
-pollRoutes.get("/poll/:pollId/vote/:optionId", requireAuth, issueVote);
+  router.post("/newPoll", requireAuth, createNewPoll);
+  router.get("/poll/:pollId", requireAuth, fetchPoll);
+  router.get("/polls", requireAuth, fetchAllPolls);
+  router.get("/poll/:pollId/vote/:optionId", requireAuth, (req: Request, res: Response, next: NextFunction) => issueVote(req, res,next, io));
+
+  return router;
+};

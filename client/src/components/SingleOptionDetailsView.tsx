@@ -10,7 +10,7 @@ export default function SingleOptionDetailsView({
   total_votes,
 }: SingleOptionDetailsViewProps) {
   console.log(options);
-  const getTopOption = (options: IOption[]) => {
+  const getTopOption = (options: IOption[]): [string, number] => {
     let m_votes = options[0].votes,
       m_option_name = options[0].option_name;
     options.forEach((option: IOption) => {
@@ -19,7 +19,7 @@ export default function SingleOptionDetailsView({
         m_option_name = option.option_name;
       }
     });
-    return [m_option_name, m_votes] as [string, number];
+    return [m_option_name, m_votes];
   };
 
   return (

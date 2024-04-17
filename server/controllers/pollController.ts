@@ -1,8 +1,9 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { ExpressError } from "../utils/ExpressError";
 import { User } from "../models/User";
 import { Poll } from "../models/Poll";
 import { IOption, IPoll } from "../utils/mongooseTypes";
+import { Server } from "http";
 
 export const createNewPoll = async (req: Request, res: Response) => {
   const { title, options } = req.body;
@@ -54,9 +55,10 @@ export const fetchAllPolls = async (req: Request, res: Response) => {
   }
 };
 
-export const issueVote = async (req: Request, res: Response) => {
+export const issueVote = async (req: Request, res: Response,next: NextFunction, io: any) => {
   const { pollId, optionId } = req.params;
   const currentUser = req.user;
+
   try {
     const poll = await Poll.findById(pollId);
     if (!poll) {
@@ -66,21 +68,24 @@ export const issueVote = async (req: Request, res: Response) => {
       res.json("Already voted").status(403);
       return;
     }
-    console.log(poll);
+
     const selectedOption = poll.options.find(
       (option) => option._id == optionId
     );
 
-    console.log("selected: ", selectedOption);
     if (!selectedOption) {
       throw new ExpressError("Invalid option!", 404);
     }
+
     selectedOption.votes += 1;
     selectedOption.OptionVoters.push(currentUser.id);
     poll.total_votes += 1;
     poll.voters.push(currentUser.id);
 
     await poll.save();
+
+    // Emit updatePoll event to all connected clients
+    io.emit("updatePoll", poll);
 
     res.json(poll).status(201);
   } catch (err) {

@@ -86,7 +86,7 @@ const Login: React.FC = () => {
           visible={true}
         />
       </div>
-    ); // You can replace this with a loading spinner or any other loading indicator
+    ); 
   }
 
   return (
