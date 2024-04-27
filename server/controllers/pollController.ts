@@ -2,8 +2,6 @@ import { NextFunction, Request, Response } from "express";
 import { ExpressError } from "../utils/ExpressError";
 import { User } from "../models/User";
 import { Poll } from "../models/Poll";
-import { IOption, IPoll } from "../utils/mongooseTypes";
-import { Server } from "http";
 
 export const createNewPoll = async (req: Request, res: Response) => {
   const { title, options } = req.body;
@@ -28,7 +26,7 @@ export const createNewPoll = async (req: Request, res: Response) => {
 export const fetchPoll = async (req: Request, res: Response) => {
   const { pollId } = req.params;
   if (!pollId) {
-    throw new ExpressError("poll id not passed!", 400);
+    throw new ExpressError("poll id not passed!", 400);     
   }
   try {
     const poll = await Poll.findById({ _id: pollId }).populate("author");
@@ -84,7 +82,6 @@ export const issueVote = async (req: Request, res: Response,next: NextFunction, 
 
     await poll.save();
 
-    // Emit updatePoll event to all connected clients
     io.emit("updatePoll", poll);
 
     res.json(poll).status(201);
@@ -92,3 +89,23 @@ export const issueVote = async (req: Request, res: Response,next: NextFunction, 
     if (err instanceof Error) throw new ExpressError(err.message, 400);
   }
 };
+
+
+export const checkVoteStatus = async (req: Request, res: Response) => {
+
+  const { pollId } = req.params;
+  const currentUser = req.user;
+  try {
+    const poll = await Poll.findById(pollId);
+    if (!poll) {
+      throw new ExpressError("Poll not found", 404);
+    }
+    if (poll.voters.includes(currentUser.id)) {
+      res.json("Already voted").status(403);
+      return;
+    }
+    res.json(poll).status(201);
+  } catch (err) {
+    if (err instanceof Error) throw new ExpressError(err.message, 400);
+  }
+}

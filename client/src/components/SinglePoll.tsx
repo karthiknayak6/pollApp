@@ -2,9 +2,9 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import SingleOptionDetailsView from "./SingleOptionDetailsView";
-import { IOption, IPoll } from "./YourPolls";
+import { Poll } from "@/utils/types";
 interface SinglePollProps {
-  poll: IPoll;
+  poll: Poll;
 }
 
 export const SinglePoll: React.FC<SinglePollProps> = ({ poll }) => {

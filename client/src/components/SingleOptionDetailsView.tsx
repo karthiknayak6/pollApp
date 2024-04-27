@@ -1,8 +1,9 @@
 import React from "react";
 import ProgressBar from "./ProgressBar";
 import { IOption } from "./YourPolls";
+import { Option } from "@/utils/types";
 type SingleOptionDetailsViewProps = {
-  options: [IOption];
+  options: Option[];
   total_votes: number;
 };
 export default function SingleOptionDetailsView({
@@ -10,10 +11,10 @@ export default function SingleOptionDetailsView({
   total_votes,
 }: SingleOptionDetailsViewProps) {
   console.log(options);
-  const getTopOption = (options: IOption[]): [string, number] => {
+  const getTopOption = (options: Option[]): [string, number] => {
     let m_votes = options[0].votes,
       m_option_name = options[0].option_name;
-    options.forEach((option: IOption) => {
+    options.forEach((option: Option) => {
       if (option.votes > m_votes) {
         m_votes = option.votes;
         m_option_name = option.option_name;

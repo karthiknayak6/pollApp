@@ -2,10 +2,11 @@
 
 import React, { useEffect, useState } from "react";
 
-import ProgressBar from "./ProgressBar";
+
 import { SinglePoll } from "./SinglePoll";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { Poll } from "@/utils/types";
 
 export interface IOption {
   _id: string;
@@ -24,7 +25,7 @@ export interface IPoll {
 }
 export default function YourPolls() {
   const router = useRouter();
-  const [polls, setPolls] = useState<IPoll[]>([]);
+  const [polls, setPolls] = useState<Poll[]>([]);
   useEffect(() => {
     const res = axios
       .get("http://localhost:8080/polls", {
@@ -46,7 +47,7 @@ export default function YourPolls() {
     <div className="mt-16">
       <div className="text-3xl font-semibold text-gray-700">Your Polls</div>
       <div className="mt-10 space-y-7 flex flex-col justify-center px-9">
-        {polls.map((poll: IPoll, index) => {
+        {polls.length > 0 && polls.map((poll: Poll, index: number) => {
           return <SinglePoll poll={poll} key={index} />;
         })}
       </div>

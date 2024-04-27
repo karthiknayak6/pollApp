@@ -6,8 +6,11 @@ import { IOption } from "@/components/YourPolls";
 import ProgressBar from "../../../components/ProgressBar";
 import io from "socket.io-client";
 import { Option, Poll } from "@/utils/types";
+import { json } from "stream/consumers";
+import { useRouter } from "next/navigation";
 
 export default function PollDetails({ params }: any) {
+  const router = useRouter()
   const [poll, setPoll] = useState<Poll>({
     __v: 0,
     _id: '',
@@ -27,8 +30,9 @@ export default function PollDetails({ params }: any) {
     voters: [],
   });
   
-  const [isVoted, setIsVoted] = useState(false);
+  const [votedMsg, setVotedMsg] = useState(false);
   const [alreadyVoted, setAlreadyVoted] = useState(false);
+  const [voteDisabled, setVoteDisabled] = useState(false)
 
   useEffect(() => {
     const fetchPoll = async () => {
@@ -38,17 +42,16 @@ export default function PollDetails({ params }: any) {
           { withCredentials: true }
         );
         const data = response.data;
-        if (data) {
-        }
-        if (!data) throw Error("Fetch failed");
-        setPoll(data);
+        let user = localStorage.getItem("user");
+        setVoteDisabled(data.voters.includes(user && JSON.parse(user)))
+        setPoll(data)
       } catch (err) {
         console.log(err);
       }
     };
 
     fetchPoll();
-  }, [params.pollId, isVoted]);
+  }, [params.pollId, votedMsg]);
 
   useEffect(() => {
     const socket = io("http://localhost:8080");
@@ -69,17 +72,24 @@ export default function PollDetails({ params }: any) {
         withCredentials: true,
       }
     );
+    console.log("RESOOO", response.data);
     const data = response.data;
+    console.log("DATA: ",data);
     if (data) {
-      if (data === "Already voted") {
+      if (data.message === "Unauthorized") {
+        router.push("/login");
+      } else if (data === "Already voted") {
         setAlreadyVoted(true);
       } else {
-        setIsVoted(true);
+        setVotedMsg(true);
+        setTimeout(() => {
+          setVotedMsg(false)
+        },2000)
       }
     }
   };
 
-  console.log("Poll autherrrr:",poll.author);
+
 
   return (
     <Layout>
@@ -108,7 +118,7 @@ export default function PollDetails({ params }: any) {
                     </span>
                     <div>
                       <button
-                        disabled={isVoted}
+                        disabled={voteDisabled}
                         className=" disabled:bg-slate-400 bg-purple-500 hover:bg-purple-700 text-white text-sm font-bold py-1 px-3 rounded"
                         onClick={() => {
                           handleVote(option._id, poll._id);
@@ -127,7 +137,7 @@ export default function PollDetails({ params }: any) {
               Already Voted
             </p>
           )}
-          {isVoted && (
+          {votedMsg && (
             <p className=" text-white bg-green-600 rounded-md text-center py-2">
               Successfully voted!
             </p>

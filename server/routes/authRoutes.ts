@@ -14,4 +14,4 @@ authRoutes.get("/", checkUser, doc);
 authRoutes.post("/register", register);
 authRoutes.post("/login", login);
 authRoutes.get("/logout", logout);
-authRoutes.get("/currentUser", requireAuth,  currentUserName);
+authRoutes.get("/currentUser",  currentUserName);

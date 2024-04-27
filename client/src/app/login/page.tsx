@@ -7,12 +7,11 @@ import React from "react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import { Audio, BallTriangle } from "react-loader-spinner";
+import { BallTriangle } from "react-loader-spinner";
 import { useAuth } from "../../hooks/useAuth";
 
-
 const Login: React.FC = () => {
-  const { dispatch } = useAuth()
+  const { dispatch } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -57,13 +56,12 @@ const Login: React.FC = () => {
       }
       if (response) {
         console.log("RESDATA:)", response.data);
-        localStorage.setItem('user', JSON.stringify(response.data.user))
-        dispatch({type: 'LOGIN', payload: response.data.user})
-        
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+        dispatch({ type: "LOGIN", payload: response.data.user });
+
         setIsLoggedIn(true);
         router.push("/");
       }
-     
     } catch (err) {
       if (err instanceof Error)
         console.error("Registration error:", err.message);
@@ -86,7 +84,7 @@ const Login: React.FC = () => {
           visible={true}
         />
       </div>
-    ); 
+    );
   }
 
   return (

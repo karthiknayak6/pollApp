@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { ExpressError } from "../utils/ExpressError";
-import { IGetUserAuthInfoRequest } from "../utils/ExpressTypes";
+
 
 export const checkUser = (req: Request, res: Response, next: NextFunction) => {
   console.log("user checked!!");
@@ -15,6 +15,10 @@ export const requireAuth = (
 ) => {
   const secret = process.env.JWT_SECRET;
   const token = req.cookies.jwt;
+  if (!token) {
+    res.json({ message: "Unauthorized" });
+    return;
+  }
   console.log("TOKEENNNNNNN: ", token);
   try {
     if (secret) {
@@ -25,6 +29,7 @@ export const requireAuth = (
     }
     next();
   } catch (err) {
-    if (err instanceof Error) throw new ExpressError(err.message, 400);
-  }
+      res.status(401).json({ message: "Invalid token" }); // Send a response instead of throwing an error
+    }
+  
 };

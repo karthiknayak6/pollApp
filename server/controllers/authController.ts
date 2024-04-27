@@ -95,13 +95,18 @@ export const logout = (req: Request, res: Response) => {
 
 export const currentUserName = async (req: Request, res: Response) => {
   try {
+    if ( !req?.user) { 
+      console.log("No user");
+      res.status(404).json("User not found");
+    }
     const user = await User.findById(req.user.id);
     console.log("CURR", user);
 
     if (user) {
       res.json(user.first_name);
     } else {
-      res.status(404).json({ error: "User not found" });
+      console.log("User not found!!");
+      res.status(404).json("User not found");
     }
   } catch (err) {
     console.error("Error retrieving user data:", err);
